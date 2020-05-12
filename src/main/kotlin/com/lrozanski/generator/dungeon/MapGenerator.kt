@@ -1,30 +1,34 @@
 package com.lrozanski.generator.dungeon
 
+import com.lrozanski.generator.dungeon.corridor.CorridorWalker
 import com.lrozanski.generator.dungeon.data.Cell
 import com.lrozanski.generator.dungeon.data.Room
 import com.lrozanski.generator.dungeon.data.Size
 
-class MapGenerator {
+val ROOMS: MutableList<Room> = mutableListOf()
 
-    private val roomGenerator: RoomGenerator = RoomGenerator()
+class MapGenerator(val size: Size) {
+
+    private val grid: Grid = Grid(size)
+
+    private val roomGenerator: RoomGenerator = RoomGenerator(grid)
+    private val corridorWalker = CorridorWalker(grid)
     private val mapVisualizer: MapVisualizer = MapVisualizer()
-    private val rooms: MutableList<Room> = mutableListOf()
 
-    private lateinit var grid: Grid
-
-    fun generate(size: Size) {
-        grid = Grid(size)
-
+    fun generate() {
         roomGenerator
-            .generate(grid, 2)
-            .apply { rooms.add(this!!) }
+            .generateStartRoom(2)
+            .apply { ROOMS.add(this!!) }
+            .apply { this!!.connectors.forEach { corridorWalker.walk(it) } }
 
-        val corridorWalker = CorridorWalker()
-        rooms.forEach { room ->
-            room.connectors.forEach { corridorWalker.walk(grid, room, it) }
+        ROOMS.forEach { room ->
+            room.cleanUpConnectors()
+            room.connectors.forEach { connector ->
+                grid[connector.position] = Cell(connector.position, CellType.DOOR)
+            }
         }
 
-        mapVisualizer.createImage(grid, 8)
+//        mapVisualizer.createImage(grid, 8)
     }
 
     fun findFilledCells() = grid.filter(Cell::isNotEmpty)

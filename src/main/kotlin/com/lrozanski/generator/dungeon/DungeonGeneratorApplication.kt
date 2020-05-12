@@ -4,8 +4,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class DungeonGeneratorApplication
-
-fun main(args: Array<String>) {
-    runApplication<DungeonGeneratorApplication>(*args)
+class DungeonGeneratorApplication {
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            runApplication<DungeonGeneratorApplication>(*args)
+        }
+    }
 }

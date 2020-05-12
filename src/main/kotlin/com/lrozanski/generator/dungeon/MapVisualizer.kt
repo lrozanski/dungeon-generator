@@ -1,12 +1,20 @@
 package com.lrozanski.generator.dungeon
 
+import com.lrozanski.generator.dungeon.data.Position
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.RenderingHints
-import java.awt.Stroke
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
+
+data class DebugPoint(val position: Position, val color: Color)
+
+private val debug: MutableSet<DebugPoint> = mutableSetOf()
+
+fun debug(position: Position, color: Color) {
+    debug.add(DebugPoint(position, color))
+}
 
 class MapVisualizer {
 
@@ -28,6 +36,10 @@ class MapVisualizer {
             }
             graphics.color = color
             graphics.fillRect(cell.x * scale, cell.y * scale, scale, scale)
+        }
+        debug.forEach {
+            graphics.color = it.color
+            graphics.fillRect(it.position.x * scale, it.position.y * scale, scale, scale)
         }
 
         graphics.color = Color(109, 104, 117, 100)

@@ -11,9 +11,12 @@ class Grid(val size: Size) {
 
     operator fun get(position: Position): Cell? = get(position.x, position.y)
     operator fun get(position: Position, size: Size): GridRect = GridRect(this, position, size)
+
     operator fun set(x: Int, y: Int, value: Cell) {
         grid[x][y] = value
     }
+
+    operator fun set(position: Position, value: Cell) = set(position.x, position.y, value)
 
     fun contains(x: Int, y: Int): Boolean {
         return x >= 0 && x <= grid.size - 1
@@ -21,7 +24,6 @@ class Grid(val size: Size) {
     }
 
     fun isRectangleEmpty(position: Position, size: Size): Boolean = allMatch(position, size) { it.type == CellType.EMPTY }
-    fun isRectangleEmpty(rect: GridRect): Boolean = isRectangleEmpty(rect.position, rect.size)
 
     fun allMatch(position: Position, size: Size, predicate: (cell: Cell) -> Boolean): Boolean {
         for (x in position.x until position.x + size.w) {
@@ -35,12 +37,12 @@ class Grid(val size: Size) {
     }
 
     fun forEachCell(room: Room, action: (cell: Cell) -> Unit) = forEachCell(room.rect, action)
-    fun forEachCell(action: (cell: Cell) -> Unit) = forEachCell(Position.zero, size, action)
+    fun forEachCell(action: (cell: Cell) -> Unit) = forEachCell(Position.zero, Size(size.w - 1, size.h - 1), action)
     fun forEachCell(gridRect: GridRect, action: (cell: Cell) -> Unit) = forEachCell(gridRect.position, gridRect.size, action)
 
     private fun forEachCell(position: Position, size: Size, action: (cell: Cell) -> Unit) {
-        for (x in position.x until position.x + size.w) {
-            for (y in position.y until position.y + size.h) {
+        for (x in position.x..position.x + size.w) {
+            for (y in position.y..position.y + size.h) {
                 action(this[x, y]!!)
             }
         }

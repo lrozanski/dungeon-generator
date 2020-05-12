@@ -11,8 +11,9 @@ class GeneratorResource {
 
     @PostMapping("/generate", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun generate(): List<Cell> {
-        val mapGenerator = MapGenerator()
-        mapGenerator.generate(Size(64, 64))
+        ROOMS.clear()
+        val mapGenerator = MapGenerator(Size(64, 64))
+        mapGenerator.generate()
 
         return mapGenerator.findFilledCells()
     }

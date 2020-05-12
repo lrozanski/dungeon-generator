@@ -7,6 +7,6 @@ internal class MapGeneratorTest {
 
     @Test
     fun generateMap() {
-        MapGenerator().generate(Size(64, 64))
+        MapGenerator(Size(64, 64)).generate()
     }
 }
