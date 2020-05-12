@@ -1,11 +1,9 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     id("org.springframework.boot") version "2.2.6.RELEASE"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
-    id("com.github.johnrengelman.shadow") version "5.1.0"
 
     kotlin("jvm") version "1.3.71"
     kotlin("plugin.spring") version "1.3.71"
@@ -23,12 +21,6 @@ configurations {
 
 tasks.withType<BootJar>().configureEach {
     launchScript()
-}
-
-tasks.withType<ShadowJar>() {
-    manifest {
-        attributes["Main-Class"] = "com.lrozanski.generator.dungeon.DungeonGeneratorApplication"
-    }
 }
 
 repositories {
