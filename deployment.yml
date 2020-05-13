@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: dungeon-generator
+  name: dungeon-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dungeon-generator
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: dungeon-generator
+    spec:
+      containers:
+      - image: eu.gcr.io/dungeon-generator-277012/dungeon-generator
+        name: dungeon-generator
+        resources: {}
+status: {}
