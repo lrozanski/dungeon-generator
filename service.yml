@@ -1,18 +1,17 @@
-apiVersion: v1
-kind: Service
+apiVersion: "v1"
+kind: "Service"
 metadata:
-  creationTimestamp: null
+  name: "dungeon-generator-service"
+  namespace: "default"
   labels:
-    app: dungeon-generator-lbs
-  name: dungeon-generator-lbs
+    app: "dungeon-generator"
 spec:
   ports:
-  - name: 8080-8080
+  - protocol: "TCP"
     port: 8080
-    protocol: TCP
     targetPort: 8080
   selector:
-    app: dungeon-generator-lbs
-  type: LoadBalancer
-status:
-  loadBalancer: {}
+    app: "dungeon-generator"
+  type: "LoadBalancer"
+  loadBalancerIP: ""
+
