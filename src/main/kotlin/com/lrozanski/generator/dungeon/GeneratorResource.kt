@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
-@CrossOrigin(origins = ["*"])
-@RestController("/")
+@CrossOrigin
+@RestController("/generator")
 class GeneratorResource {
 
     @PostMapping("/generate", produces = [MediaType.APPLICATION_JSON_VALUE])
