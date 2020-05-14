@@ -5,30 +5,32 @@ import com.lrozanski.generator.dungeon.data.Cell
 import com.lrozanski.generator.dungeon.data.Room
 import com.lrozanski.generator.dungeon.data.Size
 
-val ROOMS: MutableList<Room> = mutableListOf()
+class MapGenerator(val size: Size, private val roomCount: IntRange) {
 
-class MapGenerator(val size: Size) {
-
-    private val grid: Grid = Grid(size)
+    val grid: Grid = Grid(size)
+    val rooms: MutableList<Room> = mutableListOf()
 
     private val roomGenerator: RoomGenerator = RoomGenerator(grid)
-    private val corridorWalker = CorridorWalker(grid)
-    private val mapVisualizer: MapVisualizer = MapVisualizer()
+    private val corridorWalker = CorridorWalker(this, grid)
 
     fun generate() {
-        roomGenerator
-            .generateStartRoom(2)
-            .apply { ROOMS.add(this!!) }
-            .apply { this!!.connectors.forEach { corridorWalker.walk(it) } }
+        var tries = 0
+        while (rooms.size !in roomCount && tries++ < 1000) {
+            grid.clear()
+            rooms.clear()
 
-        ROOMS.forEach { room ->
-            room.cleanUpConnectors()
-            room.connectors.forEach { connector ->
-                grid[connector.position] = Cell(connector.position, CellType.DOOR)
+            roomGenerator
+                .generateStartRoom(2)
+                ?.apply { rooms.add(this) }
+                ?.apply { this.connectors.forEach { corridorWalker.walk(it) } }
+
+            rooms.forEach { room ->
+                room.cleanUpConnectors()
+                room.connectors.forEach { connector ->
+                    grid[connector.position] = Cell(connector.position, CellType.DOOR)
+                }
             }
         }
-
-//        mapVisualizer.createImage(grid, 8)
     }
 
     fun findFilledCells() = grid.filter(Cell::isNotEmpty)

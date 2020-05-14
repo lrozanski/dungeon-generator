@@ -54,4 +54,12 @@ class Grid(val size: Size) {
         forEachCell { cell -> cell.takeIf(predicate)?.apply { cellList.add(this) } }
         return cellList
     }
+
+    fun clear() {
+        for (x in 0 until size.w) {
+            for (y in 0 until size.h) {
+                grid[x][y] = Cell(x, y, CellType.EMPTY)
+            }
+        }
+    }
 }

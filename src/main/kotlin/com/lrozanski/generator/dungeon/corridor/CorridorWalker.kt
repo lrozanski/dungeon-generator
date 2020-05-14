@@ -1,12 +1,10 @@
 package com.lrozanski.generator.dungeon.corridor
 
 import com.lrozanski.generator.dungeon.Grid
-import com.lrozanski.generator.dungeon.ROOMS
+import com.lrozanski.generator.dungeon.MapGenerator
 import com.lrozanski.generator.dungeon.data.Connector
-import com.lrozanski.generator.dungeon.debug
-import java.awt.Color
 
-class CorridorWalker(private val grid: Grid) {
+class CorridorWalker(private val generator: MapGenerator, private val grid: Grid) {
 
     private val corridorAppender = CorridorAppender(grid)
 
@@ -34,7 +32,7 @@ class CorridorWalker(private val grid: Grid) {
             placeFloor()
             placeWalls()
         }
-        ROOMS.add(newRoom)
+        generator.rooms.add(newRoom)
         newRoom
             .connectors
             .filter { it != newRoom.connectors.first() }

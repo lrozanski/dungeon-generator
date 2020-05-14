@@ -14,7 +14,7 @@ class RoomGenerator(private val grid: Grid) {
 
         do {
             room = generateRoom()
-        } while ((!room.rect.grow(roomMargin).isEmpty() && i++ < tries) || room.rect.area() < minArea)
+        } while ((!room.rect.grow(roomMargin).isEmpty() && i++ < tries) || room.rect.area() < minArea || !room.rect.isWithinBounds())
         if (i >= tries) {
             return null
         }
