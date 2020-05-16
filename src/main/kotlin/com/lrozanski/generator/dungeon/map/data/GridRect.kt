@@ -1,8 +1,8 @@
-package com.lrozanski.generator.dungeon.data
+package com.lrozanski.generator.dungeon.map.data
 
-import com.lrozanski.generator.dungeon.Grid
+import com.lrozanski.generator.dungeon.map.AbstractGrid
 
-data class GridRect(val grid: Grid, val position: Position, val size: Size) {
+data class GridRect<T>(val grid: AbstractGrid<T>, val position: Position, val size: Size) {
 
     val xMin = position.x
     val yMin = position.y
@@ -11,11 +11,10 @@ data class GridRect(val grid: Grid, val position: Position, val size: Size) {
 
     fun area() = size.w * size.h
 
-    fun grow(amount: Int = 1) = GridRect(grid, position.offset(-amount, -amount), size.add(amount * 2, amount * 2))
+    fun grow(amount: Int = 1) = GridRect(grid, position.offset(-amount, -amount), size.add(amount * 2 - 1, amount * 2 - 1))
         .limitToBounds()
 
     fun offset(offset: Position) = GridRect(grid, position + offset, size)
-
     fun isEmpty(): Boolean = grid.isRectangleEmpty(position, size)
 
     fun isNotEmpty(): Boolean = !isEmpty()
@@ -27,7 +26,7 @@ data class GridRect(val grid: Grid, val position: Position, val size: Size) {
     fun isWithinBounds(): Boolean = xMin >= 0 && xMax < grid.size.w
         && yMin >= 0 && yMax < grid.size.h
 
-    private fun limitToBounds(): GridRect {
+    fun limitToBounds(): GridRect<T> {
         if (isWithinBounds()) {
             return this
         }
@@ -37,21 +36,33 @@ data class GridRect(val grid: Grid, val position: Position, val size: Size) {
         )
         val newSize = Size(
             when {
-                xMax >= grid.size.w -> grid.size.w - position.x
+                xMax >= grid.size.w -> grid.size.w - position.x - 1
                 else -> size.w
             },
             when {
-                yMax >= grid.size.h -> grid.size.h - position.y
+                yMax >= grid.size.h -> grid.size.h - position.y - 1
                 else -> size.h
             }
         )
         return GridRect(grid, newPosition, newSize)
     }
 
-    fun outline(): List<Cell> {
-        return grid.filter { cell ->
-            (cell.x == xMin || cell.x == xMax) && (cell.y in yMin..yMax)
-                || (cell.y == yMin || cell.y == yMax) && (cell.x in xMin..xMax)
+    fun forEachCell(action: (cell: T) -> Unit) {
+        for (x in xMin..xMax) {
+            for (y in yMin..yMax) {
+                action(grid[x, y]!!)
+            }
         }
+    }
+
+    fun allCellsMatch(action: (cell: T) -> Boolean): Boolean {
+        for (x in xMin..xMax) {
+            for (y in yMin..yMax) {
+                if (!action(grid[x, y]!!)) {
+                    return false
+                }
+            }
+        }
+        return true
     }
 }

@@ -1,6 +1,6 @@
 package com.lrozanski.generator.dungeon.corridor
 
-import com.lrozanski.generator.dungeon.data.Position
+import com.lrozanski.generator.dungeon.map.data.Position
 
 enum class Direction(val position: Position) {
     UP(Position(0, -1)),

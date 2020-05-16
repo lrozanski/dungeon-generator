@@ -4,5 +4,8 @@ enum class CellType {
     EMPTY,
     FLOOR,
     WALL,
-    DOOR
+    DOOR,
+    STAIRS_UP,
+    STAIRS_DOWN,
+    UNUSED
 }

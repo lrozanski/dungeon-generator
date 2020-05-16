@@ -1,4 +1,4 @@
-package com.lrozanski.generator.dungeon.data
+package com.lrozanski.generator.dungeon.map.data
 
 import kotlin.math.abs
 import kotlin.random.Random
@@ -28,6 +28,7 @@ data class Position(val x: Int, val y: Int) {
 
     operator fun plus(other: Position) = Position(x + other.x, y + other.y)
     operator fun minus(other: Position) = Position(x - other.x, y - other.y)
+    operator fun times(value: Int) = Position(x * value, y * value)
 
     companion object {
         val zero = Position(0, 0)

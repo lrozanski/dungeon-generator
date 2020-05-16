@@ -1,21 +1,21 @@
 package com.lrozanski.generator.dungeon.corridor
 
-import com.lrozanski.generator.dungeon.Grid
 import com.lrozanski.generator.dungeon.RoomGenerator
-import com.lrozanski.generator.dungeon.data.Room
+import com.lrozanski.generator.dungeon.map.Grid
+import com.lrozanski.generator.dungeon.map.Mask
+import com.lrozanski.generator.dungeon.map.data.Room
 
 class CorridorAppender(grid: Grid) {
 
     private val roomGenerator: RoomGenerator = RoomGenerator(grid)
 
-    fun appendRoom(corridor: Corridor): Room? {
-        val tries = 1000
+    fun appendRoom(corridor: Corridor, corridorMask: Mask): Room? {
         var room: Room?
-        var i = 0
+        var tries = 0
 
         do {
-            room = roomGenerator.generateAtCorridorHead(corridor)
-        } while (room == null && i++ < tries)
+            room = roomGenerator.generateAtCorridorHead(corridor, corridorMask)
+        } while (room == null && tries++ < 100)
 
         return room
     }

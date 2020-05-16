@@ -1,13 +1,15 @@
-package com.lrozanski.generator.dungeon.data
+package com.lrozanski.generator.dungeon.map.data
 
 import com.lrozanski.generator.dungeon.CellType
 import com.lrozanski.generator.dungeon.corridor.Direction
 
 data class Connector(val position: Position, val direction: Direction) {
     var unused: Boolean = false
+
+    fun forward(amount: Int) = position + direction.position * amount
 }
 
-class Room(val rect: GridRect, private val maxConnectors: Int = 5) {
+class Room(val rect: GridRect<Cell>, private val maxConnectors: Int = 5) {
 
     var connectors: MutableList<Connector> = mutableListOf()
 
@@ -34,12 +36,13 @@ class Room(val rect: GridRect, private val maxConnectors: Int = 5) {
 
     fun placeConnectors() {
         val positions = mutableListOf<Position>()
+        var tries = 0
 
         for (i in remainingConnectors() downTo 0) {
             var position: Position
             do {
                 position = randomPointOnEdge()
-            } while (positions.any { it.isAdjacent(position) })
+            } while (positions.any { it.isAdjacent(position) } && tries++<1000)
 
             positions += position
         }
@@ -60,7 +63,7 @@ class Room(val rect: GridRect, private val maxConnectors: Int = 5) {
         rect.grid[it.position] = Cell(it.position, CellType.DOOR)
     }
 
-    private fun forEachCell(action: (cell: Cell) -> Unit) = rect.grid.forEachCell(this) { action(it) }
+    private fun forEachCell(action: (cell: Cell) -> Unit) = rect.grid.forEachCell(rect) { action(it) }
 
     private fun randomPointOnEdge(): Position = edge(Direction.values().random()).random()
 

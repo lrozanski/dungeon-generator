@@ -1,4 +1,4 @@
-package com.lrozanski.generator.dungeon.data
+package com.lrozanski.generator.dungeon.map.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.lrozanski.generator.dungeon.CellType
