@@ -1,4 +1,4 @@
-package com.lrozanski.generator.dungeon.corridor
+package com.lrozanski.generator.dungeon.map.corridor
 
 import com.lrozanski.generator.dungeon.map.data.Position
 

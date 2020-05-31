@@ -1,7 +1,7 @@
 package com.lrozanski.generator.dungeon.map.data
 
 import com.lrozanski.generator.dungeon.CellType
-import com.lrozanski.generator.dungeon.corridor.Direction
+import com.lrozanski.generator.dungeon.map.corridor.Direction
 
 data class Connector(val position: Position, val direction: Direction) {
     var unused: Boolean = false

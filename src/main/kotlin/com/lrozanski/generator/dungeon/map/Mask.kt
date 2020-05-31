@@ -1,6 +1,6 @@
 package com.lrozanski.generator.dungeon.map
 
-import com.lrozanski.generator.dungeon.corridor.Corridor
+import com.lrozanski.generator.dungeon.map.corridor.Corridor
 import com.lrozanski.generator.dungeon.extensions.arrayOf2d
 import com.lrozanski.generator.dungeon.map.data.Cell
 import com.lrozanski.generator.dungeon.map.data.GridRect

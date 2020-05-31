@@ -2,6 +2,7 @@
 *.gif
 build/
 .gradle/
+*.json
 
 # Created by https://www.gitignore.io/api/git,java,linux,macos,kotlin,windows,intellij+all
 # Edit at https://www.gitignore.io/?templates=git,java,linux,macos,kotlin,windows,intellij+all

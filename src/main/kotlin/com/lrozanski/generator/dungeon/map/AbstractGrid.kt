@@ -13,7 +13,7 @@ abstract class AbstractGrid<T>(val size: Size) {
     operator fun get(x: Int, y: Int): T? = if (contains(x, y)) grid[x][y] else null
     operator fun get(position: Position): T? = get(position.x, position.y)
 
-    operator fun set(x: Int, y: Int, value: T) {
+    open operator fun set(x: Int, y: Int, value: T) {
         if (contains(x, y)) {
             grid[x][y] = value
         }
@@ -73,7 +73,7 @@ abstract class AbstractGrid<T>(val size: Size) {
         return cellList
     }
 
-    fun fill(initializer: (x: Int, y: Int) -> T) {
+    open fun fill(initializer: (x: Int, y: Int) -> T) {
         for (x in 0 until size.w) {
             for (y in 0 until size.h) {
                 grid[x][y] = initializer(x, y)

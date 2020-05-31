@@ -1,6 +1,6 @@
 package com.lrozanski.generator.dungeon
 
-import com.lrozanski.generator.dungeon.corridor.Corridor
+import com.lrozanski.generator.dungeon.map.corridor.Corridor
 import com.lrozanski.generator.dungeon.map.Grid
 import com.lrozanski.generator.dungeon.map.Mask
 import com.lrozanski.generator.dungeon.map.data.*
@@ -63,10 +63,6 @@ class RoomGenerator(private val grid: Grid) {
 
         val adjustedRoom = Room(adjustedRect, Random.nextInt(2, 5))
         adjustedRoom.addConnector(Connector(head, connectorDirection))
-        return adjustedRoom.apply {
-            placeFloor()
-            placeWalls()
-            placeConnectors()
-        }
+        return adjustedRoom
     }
 }

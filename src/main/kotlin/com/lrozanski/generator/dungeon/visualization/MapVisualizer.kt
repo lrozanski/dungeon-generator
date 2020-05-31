@@ -32,16 +32,25 @@ object MapVisualizer {
 
     fun createImage(grid: Grid, scale: Int, append: Boolean = true): BufferedImage {
         val (image, graphics) = createGraphics(grid, scale)
+        val bgColor = Color(66, 72, 116)
+        graphics.color = bgColor
+        graphics.fillRect(0, 0, image.width, image.height)
 
         grid.forEachCell { cell ->
-            val color = when (cell.type) {
-                CellType.EMPTY -> Color(109, 104, 117, 255)
-                CellType.WALL -> Color(229, 152, 155, 255)
-                CellType.FLOOR -> Color(255, 205, 178, 255)
-                CellType.DOOR -> Color(109, 104, 117, 255)
-                CellType.STAIRS_UP -> Color(100, 102, 255, 255)
-                CellType.STAIRS_DOWN -> Color(255, 100, 102, 255)
+            var color = when (cell.type) {
+                CellType.EMPTY -> return@forEachCell
+                CellType.WALL -> Color(166, 177, 225)
+                CellType.FLOOR -> Color(244, 238, 255)
+                CellType.DOOR -> Color(100, 109, 168)
+                CellType.STAIRS_UP -> Color(255, 192, 64)
+                CellType.STAIRS_DOWN -> Color(255, 100, 102)
                 else -> Color.BLACK
+            }
+            if (cell.secret) {
+                if (cell.type == CellType.DOOR) {
+                    color = Color(244, 238, 255)
+                }
+                color = Color(color.red, color.green, color.blue, 128)
             }
             graphics.color = color
             graphics.fillRect(cell.x * scale, cell.y * scale, scale, scale)
@@ -50,7 +59,7 @@ object MapVisualizer {
             graphics.color = it.color
             graphics.fillRect(it.position.x * scale, it.position.y * scale, scale, scale)
         }
-        drawGrid(graphics, grid, scale)
+        drawGrid(graphics, grid, scale, bgColor)
 
         if (append) {
             images += image
@@ -70,8 +79,8 @@ object MapVisualizer {
         return Pair(image, graphics)
     }
 
-    private fun drawGrid(graphics: Graphics2D, grid: AbstractGrid<*>, scale: Int) {
-        graphics.color = Color(109, 104, 117, 100)
+    private fun drawGrid(graphics: Graphics2D, grid: AbstractGrid<*>, scale: Int, color: Color) {
+        graphics.color = Color(color.red, color.green, color.blue, 64)
         graphics.stroke = BasicStroke(1f)
 
         for (x in 0..grid.size.w) {
@@ -93,7 +102,7 @@ object MapVisualizer {
             graphics.color = color
             graphics.fillRect(x * scale, y * scale, scale, scale)
         }
-        drawGrid(graphics, mask, scale)
+        drawGrid(graphics, mask, scale, Color(109, 104, 117, 255))
 
         ImageIO.write(image, "png", File("src/main/resources/corridor_mask.png"))
     }

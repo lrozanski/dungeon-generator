@@ -9,7 +9,7 @@ import com.lrozanski.generator.dungeon.map.data.Size
 import kotlin.math.max
 import kotlin.math.min
 
-class Grid(size: Size) : AbstractGrid<Cell>(size) {
+open class Grid(size: Size) : AbstractGrid<Cell>(size) {
 
     override fun createGrid(): Array<Array<Cell>> = arrayOf2d(size.w, size.h) { x, y -> Cell(x, y, CellType.EMPTY) }
 
@@ -44,7 +44,7 @@ class Grid(size: Size) : AbstractGrid<Cell>(size) {
                 val newX = x - minX + 1
                 val newY = y - minY + 1
 
-                newGrid[newX, newY] = Cell(newX, newY, grid[x][y].type)
+                newGrid[newX, newY] = Cell(newX, newY, grid[x][y].type, grid[x][y].secret)
             }
         }
         return newGrid

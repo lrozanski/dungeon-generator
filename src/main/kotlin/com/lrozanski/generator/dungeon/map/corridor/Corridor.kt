@@ -1,16 +1,15 @@
-package com.lrozanski.generator.dungeon.corridor
+package com.lrozanski.generator.dungeon.map.corridor
 
 import com.lrozanski.generator.dungeon.CellType
 import com.lrozanski.generator.dungeon.map.Grid
 import com.lrozanski.generator.dungeon.map.Mask
-import com.lrozanski.generator.dungeon.map.data.Cell
-import com.lrozanski.generator.dungeon.map.data.GridRect
-import com.lrozanski.generator.dungeon.map.data.Position
-import com.lrozanski.generator.dungeon.map.data.Size
+import com.lrozanski.generator.dungeon.map.data.*
+import com.lrozanski.generator.dungeon.visualization.debug
+import java.awt.Color
 import kotlin.math.max
 import kotlin.random.Random
 
-class Corridor(private val grid: Grid, startPosition: Position, private val maxLength: Int = 25) {
+class Corridor(private val grid: Grid, startPosition: Position, private val fork: Boolean = false, private val maxLength: Int = 25) {
 
     val cells: MutableList<Position> = mutableListOf()
 
@@ -37,11 +36,20 @@ class Corridor(private val grid: Grid, startPosition: Position, private val maxL
             val maskRect: GridRect<Cell> = growPerpendicular(newPosition, direction, 2)
             val corridorMaskEmpty = corridorMask.isEmpty(maskRect) || direction != previousDirection
 
-            if (!grid.isEdge(newPosition) && grid.contains(newPosition.x, newPosition.y) && corridorMaskEmpty && maskRect.isEmpty() && cells.size < maxLength) {
-                cells += newPosition
-                this.direction = direction
-                corridorMask.add(newPosition)
-                return direction
+            if (grid.contains(newPosition.x, newPosition.y) && !grid.isEdge(newPosition) && cells.size < maxLength) {
+                if (fork && grid[newPosition]!!.isEmpty()) {
+//                    debug(newPosition, Color.MAGENTA)
+
+                    cells += newPosition
+                    this.direction = direction
+                    corridorMask.add(newPosition)
+                    return direction
+                } else if (corridorMaskEmpty && maskRect.isEmpty()) {
+                    cells += newPosition
+                    this.direction = direction
+                    corridorMask.add(newPosition)
+                    return direction
+                }
             }
             availableDirections -= direction
         }
@@ -71,9 +79,9 @@ class Corridor(private val grid: Grid, startPosition: Position, private val maxL
         }
     }
 
-    fun placeFloor() = cells.forEach { position ->
+    fun placeFloor(secret: Boolean = false) = cells.forEach { position ->
         if (grid[position]!!.isEmpty()) {
-            grid[position] = Cell(position, CellType.FLOOR)
+            grid[position] = Cell(position.x, position.y, CellType.FLOOR, secret)
         }
     }
 
@@ -101,14 +109,36 @@ class Corridor(private val grid: Grid, startPosition: Position, private val maxL
         } while (!placed && tries++ < 100)
     }
 
-    fun placeWalls() {
+    fun placeWalls(secret: Boolean = false) {
         cells.forEach { position ->
             position
                 .adjacent()
                 .filter { adjacentPosition -> grid.contains(adjacentPosition.x, adjacentPosition.y) }
                 .filter { adjacentPosition -> !cells.contains(adjacentPosition) }
                 .filter { adjacentPosition -> grid[adjacentPosition]!!.isEmpty() }
-                .forEach { adjacentPosition -> grid[adjacentPosition] = Cell(adjacentPosition, CellType.WALL) }
+                .forEach { adjacentPosition -> grid[adjacentPosition] = Cell(adjacentPosition.x, adjacentPosition.y, CellType.WALL, secret) }
         }
+    }
+
+    fun fork(): Connector? {
+        val cell = cells.random()
+        val direction = findDirection(cell) ?: return null
+
+        if (grid[cell + direction.position + direction.position]?.isEmpty() == true) {
+            return Connector(cell + direction.position, direction)
+        }
+        return null
+    }
+
+    private fun findDirection(cell: Position): Direction? {
+        return Direction
+            .values()
+            .filter { grid[cell + it.position]?.type == CellType.WALL }
+            .takeIf { it.isNotEmpty() }
+            ?.randomElementOrNull()
+    }
+
+    private fun <T> Collection<T>.randomElementOrNull(): T? {
+        return if (this.isEmpty()) null else this.random()
     }
 }

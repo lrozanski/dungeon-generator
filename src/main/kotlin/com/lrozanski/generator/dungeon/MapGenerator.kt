@@ -1,16 +1,18 @@
 package com.lrozanski.generator.dungeon
 
-import com.lrozanski.generator.dungeon.corridor.Corridor
-import com.lrozanski.generator.dungeon.corridor.CorridorWalker
 import com.lrozanski.generator.dungeon.map.Grid
+import com.lrozanski.generator.dungeon.map.ReplayGrid
+import com.lrozanski.generator.dungeon.map.corridor.Corridor
+import com.lrozanski.generator.dungeon.map.corridor.CorridorWalker
 import com.lrozanski.generator.dungeon.map.data.Cell
 import com.lrozanski.generator.dungeon.map.data.Room
 import com.lrozanski.generator.dungeon.map.data.Size
 import com.lrozanski.generator.dungeon.visualization.MapVisualizer
+import kotlin.random.Random
 
 class MapGenerator(val size: Size, private val roomCount: IntRange) {
 
-    val grid: Grid = Grid(size)
+    val grid: Grid = ReplayGrid(size)
     val rooms: MutableList<Room> = mutableListOf()
     val corridors: MutableSet<Corridor> = mutableSetOf()
 
@@ -30,8 +32,17 @@ class MapGenerator(val size: Size, private val roomCount: IntRange) {
             roomGenerator
                 .generateStartRoom(2)
                 ?.apply { rooms.add(this) }
-//                ?.apply { MapVisualizer.createImage(grid, 8) }
                 ?.apply { this.connectors.forEach { corridorWalker.walk(it) } }
+
+            corridors.forEach {
+                if (Random.nextBoolean()) return@forEach
+                val fork = it.fork() ?: return@forEach
+
+                val forked = corridorWalker.walk(fork, true)
+                if (forked) {
+                    grid[fork.position] = Cell(fork.position.x, fork.position.y, CellType.DOOR, secret = true)
+                }
+            }
 
             rooms.forEach { room ->
                 room.cleanUpConnectors()
